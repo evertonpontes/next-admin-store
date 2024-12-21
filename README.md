@@ -12,31 +12,32 @@ NextCommerce is a modern e-commerce platform built with Next.js and TypeScript. 
 
 ## Tech Stack
 
-- **Frontend & Backend**: [Next.js](https://nextjs.org/)  
-- **Language**: TypeScript  
-- **Styling**: Tailwind CSS  
-- **Database**: Supabase  
-- **Authentication**: *****
+- **Frontend & Backend**: [Next.js](https://nextjs.org/)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Supabase
+- **Authentication**: **\***
 
 ## Database Schema
 
 Below is the database schema used in the NextCommerce project:
 
-![Database Schema](./E-commerce.png)
+![Database Schema](./images/E-commerce.png)
 
 ## Getting Started
 
 ### Prerequisites
 
-Ensure you have the following installed:  
-- Node.js (v16 or higher)  
-- npm or yarn  
+Ensure you have the following installed:
+
+- Node.js (v16 or higher)
+- npm or yarn
 - Supabase (or your preferred database setup)
 
 ### Installation
 
-1. Clone the repository:  
+1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/nextcommerce.git
-   cd nextcommerce
-
+   git clone https://github.com/evertonpontes/next-admin-store.git
+   cd next-admin-store
+   ```
