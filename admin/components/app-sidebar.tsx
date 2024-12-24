@@ -4,16 +4,19 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
 } from '@/components/ui/sidebar';
 
 import { Gauge, Package, ShoppingCart, Tag, User } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
+import { StoreSwitcher } from '@/components/store-switcher';
+import { Store } from '@prisma/client';
 
-export const AppSidebar = ({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) => {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  stores: Store[];
+}
+
+export const AppSidebar = ({ stores, ...props }: AppSidebarProps) => {
   const data = {
     navMain: [
       {
@@ -68,6 +71,9 @@ export const AppSidebar = ({
 
   return (
     <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <StoreSwitcher stores={stores} />
+      </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>

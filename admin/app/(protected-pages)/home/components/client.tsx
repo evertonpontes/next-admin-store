@@ -53,7 +53,7 @@ export const StoreClient = ({ stores }: StoreClientProps) => {
   );
 };
 
-const StoreModal = () => {
+export const StoreModal = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const { isOpen, onOpen, onClose, command, setCommand } = useStoreModal();
