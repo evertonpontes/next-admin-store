@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { signInWithGoogleAction } from '@/app/actions';
+import { signInWithGithubAction, signInWithGoogleAction } from '@/app/actions';
 import { GoogleLogo } from '@/components/google-logo';
 
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { signInAction } from '@/app/actions';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { GithubLogo } from '@/components/github-logo';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -120,6 +121,15 @@ export const SignInForm = () => {
           >
             <GoogleLogo />
             Continue with Google
+          </Button>
+          <Button
+            type="button"
+            variant={'outline'}
+            onClick={signInWithGithubAction}
+            className="w-full"
+          >
+            <GithubLogo />
+            Continue with Github
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{' '}

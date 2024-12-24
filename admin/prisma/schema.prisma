@@ -1,0 +1,37 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Store {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  description String
+  ownerId     String
+  categories  Category[] @relation("StoreToCategory")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Category {
+  id         String      @id @default(uuid())
+  name       String
+  storeId    String
+  store      Store       @relation("StoreToCategory", fields: [storeId], references: [id])
+  attributes Attribute[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Attribute {
+  id         String   @id @default(uuid())
+  name       String
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+}

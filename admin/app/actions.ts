@@ -113,7 +113,30 @@ export const signInWithGoogleAction = async () => {
       redirectTo: `${origin}/api/auth/callback`,
     },
   });
+  if (error) {
+    console.error(error.code + ' ' + error.message);
+    return {
+      error: error.code,
+      message: error.message,
+    };
+  } else {
+    redirect(data.url);
+  }
+};
 
+export const signInWithGithubAction = async () => {
+  const origin = (await headers()).get('origin');
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+      redirectTo: `${origin}/api/auth/callback`,
+    },
+  });
   if (error) {
     console.error(error.code + ' ' + error.message);
     return {

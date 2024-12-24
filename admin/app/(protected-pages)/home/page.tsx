@@ -1,20 +1,22 @@
-import { signOutAction } from '@/app/actions';
-import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/server';
 import React from 'react';
+import { NavBar } from './components/nav-bar';
+import { StoreClient } from './components/client';
+import { prisma } from '@/prisma';
 
 export default async function HomePage() {
   const supabase = await createClient();
+
+  const stores = await prisma.store.findMany();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   return (
-    <div>
-      <Button onClick={signOutAction}>Log Out</Button>
-      <code>{JSON.stringify(user)}</code>
-      Home Page
-    </div>
+    <main>
+      <NavBar user={user} />
+      <StoreClient stores={stores} />
+    </main>
   );
 }
