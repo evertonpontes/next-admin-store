@@ -19,7 +19,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Store } from '@prisma/client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useStoreModal } from '@/hooks/use-store-modal';
 
 export function StoreSwitcher({ stores }: { stores: Store[] }) {
@@ -30,6 +30,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
   );
 
   const { isOpen, onOpen, onClose, setCommand } = useStoreModal();
+  const route = useRouter();
 
   const handleOpenChange = (open: boolean) => {
     setCommand('create');
@@ -39,6 +40,11 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
     } else {
       onClose();
     }
+  };
+
+  const handleSwitchStore = (store: Store) => {
+    setActiveStore(store);
+    route.push(`/home/${store.id}`);
   };
 
   return (
@@ -74,7 +80,7 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
             {stores.map((store, index) => (
               <DropdownMenuItem
                 key={store.name}
-                onClick={() => setActiveStore(store)}
+                onClick={() => handleSwitchStore(store)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">

@@ -15,6 +15,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 
 export const NavMain = ({
@@ -31,6 +32,8 @@ export const NavMain = ({
     }[];
   }[];
 }) => {
+  const { open, isMobile } = useSidebar();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -45,10 +48,22 @@ export const NavMain = ({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  <SidebarMenuButton
+                    asChild={!isMobile && !open}
+                    tooltip={item.title}
+                  >
+                    {!isMobile && !open ? (
+                      <a href={item.url}>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </a>
+                    ) : (
+                      <>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </>
+                    )}
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>

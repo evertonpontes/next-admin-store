@@ -1,5 +1,6 @@
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -8,7 +9,7 @@ import { ResetPasswordForm } from './reset-password-form';
 
 export default async function ResetPasswordPage() {
   return (
-    <div>
+    <div className="flex h-screen w-full items-center justify-center">
       <Card>
         <CardHeader>
           <CardTitle>Reset Password</CardTitle>
@@ -16,7 +17,9 @@ export default async function ResetPasswordPage() {
             Please enter your new password below.
           </CardDescription>
         </CardHeader>
-        <ResetPasswordForm />
+        <CardContent>
+          <ResetPasswordForm />
+        </CardContent>
       </Card>
     </div>
   );

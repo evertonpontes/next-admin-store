@@ -2,12 +2,14 @@
 
 import { signOutAction } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { User } from '@supabase/supabase-js';
+import { UserContext } from '@/contexts/user-context';
 import { LogOut, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-export const NavBar = ({ user }: { user: User | null }) => {
+export const NavBar = () => {
+  const { user } = React.useContext(UserContext);
+
   return (
     <header className="h-16 shrink-0 transition-[width,height] ease-linear">
       <div className="h-full flex items-center gap-2 px-4">
@@ -17,10 +19,8 @@ export const NavBar = ({ user }: { user: User | null }) => {
           </div>
         </Link>
         <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-semibold">
-            {user?.user_metadata.full_name}
-          </span>
-          <span className="truncate text-xs">{user?.email}</span>
+          <span className="truncate font-semibold">{user.full_name}</span>
+          <span className="truncate text-xs">{user.email}</span>
         </div>
         <div className="flex flex-grow justify-end">
           <Button variant="outline" size={'sm'} onClick={signOutAction}>

@@ -16,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 
 import React, { useTransition } from 'react';
-import { CardContent, CardFooter } from '@/components/ui/card';
 import { resetPasswordAction } from '@/app/actions';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -64,52 +63,48 @@ export const ResetPasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <CardContent className="space-y-6">
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    autoComplete="on"
-                    placeholder=""
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    autoComplete="on"
-                    placeholder=""
-                    disabled={isPending}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full" disabled={isPending}>
-            {isPending ? 'Submitting...' : 'Reset password'}
-          </Button>
-        </CardFooter>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  autoComplete="on"
+                  placeholder=""
+                  disabled={isPending}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  autoComplete="on"
+                  placeholder=""
+                  disabled={isPending}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button disabled={isPending}>
+          {isPending ? 'Submitting...' : 'Reset password'}
+        </Button>
       </form>
     </Form>
   );

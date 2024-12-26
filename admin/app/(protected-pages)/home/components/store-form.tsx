@@ -20,6 +20,7 @@ import { api, slugify } from '@/lib/utils';
 import { useStoreModal } from '@/hooks/use-store-modal';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { Store } from '@prisma/client';
 
 const formSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters.'),
@@ -30,10 +31,14 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-export const StoreForm = () => {
+interface StoreFormProps {
+  data?: Store;
+}
+
+export const StoreForm = ({ data }: StoreFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: data ?? {
       name: '',
       slug: '',
       description: '',
@@ -41,11 +46,40 @@ export const StoreForm = () => {
   });
 
   const route = useRouter();
+  const { onClose, setCommand, setStoreId } = useStoreModal();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleClose = () => {
+    setCommand('create');
+    setStoreId(null);
+    onClose();
+  };
+
+  const toastMessage = data
+    ? 'Store updated successfully'
+    : 'Store created successfully';
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const res = await api.post('/api/stores', values);
-    route.refresh();
-    console.log(res);
+    setIsLoading(true);
+    try {
+      if (!data) {
+        const { data } = await api.post<Store>('/api/stores', values);
+        route.push(`/home/${data.id}`);
+      } else {
+        await api.put<Store>(`/api/stores/${data.id}`, values);
+        location.reload();
+      }
+      route.refresh();
+      toast.success(toastMessage);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+      route.refresh();
+      toast.error('Something went wrong');
+      handleClose();
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -107,7 +141,13 @@ export const StoreForm = () => {
           )}
         />
         <DialogFooter>
-          <Button>Create store</Button>
+          <Button disabled={isLoading}>
+            {isLoading
+              ? 'Submitting...'
+              : data
+              ? 'Update Store'
+              : 'Create store'}
+          </Button>
         </DialogFooter>
       </form>
     </Form>

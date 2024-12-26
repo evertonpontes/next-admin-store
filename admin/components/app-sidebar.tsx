@@ -7,64 +7,74 @@ import {
   SidebarHeader,
 } from '@/components/ui/sidebar';
 
-import { Gauge, Package, ShoppingCart, Tag, User } from 'lucide-react';
+import { Bolt, Gauge, Package, ShoppingCart, Tag, User } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import { StoreSwitcher } from '@/components/store-switcher';
 import { Store } from '@prisma/client';
+import { NavUser } from '@/components/nav-user';
+import { useParams } from 'next/navigation';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   stores: Store[];
 }
 
 export const AppSidebar = ({ stores, ...props }: AppSidebarProps) => {
+  const params = useParams();
+  const storeId = params.storeId;
+
   const data = {
     navMain: [
       {
         title: 'Dashboard',
-        url: '/',
+        url: `/home/${storeId}`,
         icon: Gauge,
       },
       {
         title: 'Categories',
-        url: '/categories',
+        url: `/home/${storeId}/categories`,
         icon: Tag,
         isActive: true,
         items: [
           {
             title: 'All categories',
-            url: '/',
+            url: `/home/${storeId}/categories`,
           },
           {
             title: 'New category',
-            url: '/new',
+            url: `/home/${storeId}/categories/new`,
           },
         ],
       },
       {
         title: 'Products',
-        url: '/products',
+        url: `/home/${storeId}/products`,
         icon: Package,
         isActive: true,
         items: [
           {
             title: 'All products',
-            url: '/',
+            url: `/home/${storeId}/products`,
           },
           {
             title: 'New product',
-            url: '/new',
+            url: `/home/${storeId}/products/new`,
           },
         ],
       },
       {
         title: 'Orders',
-        url: '/orders',
+        url: `/home/${storeId}/orders`,
         icon: ShoppingCart,
       },
       {
         title: 'Clients',
-        url: '/clients',
+        url: `/home/${storeId}/clients`,
         icon: User,
+      },
+      {
+        title: 'Settings',
+        url: `/home/${storeId}/settings`,
+        icon: Bolt,
       },
     ],
   };
@@ -77,6 +87,9 @@ export const AppSidebar = ({ stores, ...props }: AppSidebarProps) => {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 };

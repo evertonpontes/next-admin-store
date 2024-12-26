@@ -12,13 +12,24 @@ import { DataTable } from '@/components/ui/data-table';
 
 import { DeleteStore, StoreForm } from './store-form';
 import { columns } from './columns';
+import { api } from '@/lib/utils';
 
-interface StoreClientProps {
-  stores: Store[];
-}
-
-export const StoreClient = ({ stores }: StoreClientProps) => {
+export const StoreClient = () => {
   const { isOpen, onOpen, onClose } = useStoreModal();
+  const [stores, setStores] = useState<Store[]>([]);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const res = await api.get<Store[]>('/api/stores');
+        setStores(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchStores();
+  }, []);
 
   const handleOpenChange = () => {
     if (!isOpen) {

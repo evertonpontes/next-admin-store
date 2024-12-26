@@ -148,6 +148,17 @@ export const signInWithGithubAction = async () => {
   }
 };
 
+export const getUserAction = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    console.error(error.code + ' ' + error.message);
+  }
+  return {
+    user: data.user,
+  };
+};
+
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
