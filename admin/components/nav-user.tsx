@@ -1,6 +1,13 @@
 'use client';
 
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react';
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -18,17 +25,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import React from 'react';
+import { useContext } from 'react';
 import { UserContext } from '@/contexts/user-context';
-import { signOutAction } from '@/app/actions';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function NavUser() {
   const { isMobile } = useSidebar();
 
-  const { user } = React.useContext(UserContext);
-
-  const route = useRouter();
+  const { user } = useContext(UserContext);
 
   return (
     <SidebarMenu>
@@ -40,16 +44,14 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={user.avatar_url}
-                  alt={user.full_name}
-                  className="object-cover scale-150"
-                />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage src={user.avatar_url} alt={user.full_name} />
+                <AvatarFallback className="rounded-lg">
+                  {user.full_name.slice(0, 2).toLocaleUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.full_name}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -63,26 +65,24 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage
-                    src={user.avatar_url}
-                    alt={user.full_name}
-                    className="object-cover scale-150"
-                  />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user.avatar_url} alt={user.full_name} />
+                  <AvatarFallback className="rounded-lg">
+                    {user.full_name.slice(0, 2).toLocaleUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     {user.full_name}
                   </span>
-                  <span className="truncate text-xs">{user?.email}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => route.push('/account')}>
+              <DropdownMenuItem>
                 <BadgeCheck />
-                Account
+                <Link href="/account">Account</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
@@ -90,9 +90,11 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOutAction}>
+            <DropdownMenuItem>
               <LogOut />
-              Log out
+              <form action="/api/auth/signout" method="post">
+                <button type="submit">Log out</button>
+              </form>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,35 +1,32 @@
 'use client';
 
-import React from 'react';
+import { Settings2 } from 'lucide-react';
+import { Table } from '@tanstack/react-table';
 
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
+  DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import { Button } from '@/components/ui/button';
-
-import { Table } from '@tanstack/react-table';
-import { Settings2 } from 'lucide-react';
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 
-export const DataTableViewOptions = <TData,>({
+export function DataTableViewOptions<TData>({
   table,
-}: DataTableViewOptionsProps<TData>) => {
+}: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={'outline'}
-          size={'sm'}
-          className="ml-auto hidden lg:flex"
+          variant="outline"
+          size="sm"
+          className="ml-auto hidden h-8 lg:flex"
         >
           <Settings2 className="mr-2 h-4 w-4" />
           View
@@ -59,4 +56,4 @@ export const DataTableViewOptions = <TData,>({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

@@ -4,31 +4,28 @@ import { createClient } from '@/utils/supabase/server';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-type SignUpForm = {
+type SignUpProps = {
+  name: string;
   email: string;
   password: string;
 };
 
-type SignInForm = {
-  email: string;
-  password: string;
-};
-
-export const signUpAction = async (values: SignUpForm) => {
+export async function signUpAction(values: SignUpProps) {
   const supabase = await createClient();
-  const origin = (await headers()).get('origin');
 
   const { error } = await supabase.auth.signUp({
     ...values,
     options: {
-      emailRedirectTo: `${origin}/api/auth/callback`,
+      data: {
+        full_name: values.name,
+      },
     },
   });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error('SIGN_UP ERROR: ', error);
     return {
-      error: error.code,
+      error: error.name,
       message: error.message,
     };
   } else {
@@ -37,29 +34,32 @@ export const signUpAction = async (values: SignUpForm) => {
         'Thanks for signing up! Please check your email for a verification link.',
     };
   }
+}
+
+type SignInProps = {
+  email: string;
+  password: string;
 };
 
-export const signInAction = async (values: SignInForm) => {
+export async function signInAction(values: SignInProps) {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    ...values,
-  });
+  const { error } = await supabase.auth.signInWithPassword(values);
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error('SIGN_IN ERROR: ', error);
     return {
-      error: error.code,
-      message: error.message,
+      error: error.name,
+      message: 'Invalid email or password.',
     };
   } else {
     return {
-      message: 'Successfully signed in!',
+      message: 'User logged in successfully!',
     };
   }
-};
+}
 
-export const forgotPasswordAction = async (email: string) => {
+export async function forgotPasswordAction(email: string) {
   const supabase = await createClient();
   const origin = (await headers()).get('origin');
 
@@ -68,9 +68,9 @@ export const forgotPasswordAction = async (email: string) => {
   });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error('FORGOT_PASSWORD ERROR: ', error);
     return {
-      error: error.code,
+      error: error.name,
       message: error.message,
     };
   } else {
@@ -78,9 +78,9 @@ export const forgotPasswordAction = async (email: string) => {
       message: 'Check your email for a link to reset your password.',
     };
   }
-};
+}
 
-export const resetPasswordAction = async (password: string) => {
+export async function resetPasswordAction(password: string) {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.updateUser({
@@ -88,22 +88,23 @@ export const resetPasswordAction = async (password: string) => {
   });
 
   if (error) {
-    console.log(error.code + ' ' + error.message);
+    console.error('RESET_PASSWORD ERROR: ', error);
     return {
-      error: error.code,
-      message: 'Password update failed: ' + error.message,
+      error: error.name,
+      message: error.message,
     };
   } else {
     return {
       message: 'Password updated successfully!',
     };
   }
-};
+}
 
-export const signInWithGoogleAction = async () => {
-  const origin = (await headers()).get('origin');
+export async function signInWithGoogleAction() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const origin = (await headers()).get('origin');
+
+  const { error, data } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       queryParams: {
@@ -113,21 +114,23 @@ export const signInWithGoogleAction = async () => {
       redirectTo: `${origin}/api/auth/callback`,
     },
   });
+
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error('SIGN_IN_OAUTH ERROR: ', error);
     return {
-      error: error.code,
+      error: error.name,
       message: error.message,
     };
   } else {
     redirect(data.url);
   }
-};
+}
 
-export const signInWithGithubAction = async () => {
-  const origin = (await headers()).get('origin');
+export async function signInWithGithubAction() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const origin = (await headers()).get('origin');
+
+  const { error, data } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
       queryParams: {
@@ -137,30 +140,14 @@ export const signInWithGithubAction = async () => {
       redirectTo: `${origin}/api/auth/callback`,
     },
   });
+
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error('SIGN_IN_OAUTH ERROR: ', error);
     return {
-      error: error.code,
+      error: error.name,
       message: error.message,
     };
   } else {
     redirect(data.url);
   }
-};
-
-export const getUserAction = async () => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    console.error(error.code + ' ' + error.message);
-  }
-  return {
-    user: data.user,
-  };
-};
-
-export const signOutAction = async () => {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return redirect('/sign-in');
-};
+}

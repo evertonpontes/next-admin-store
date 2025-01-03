@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Open_Sans } from 'next/font/google';
 import './globals.css';
 import { ToastContainer } from 'react-toastify';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const openSans = Open_Sans({
   subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: 'Admin Commerce',
-  description: 'Manage your commerce easily.',
+  description: 'Manage your store.',
 };
 
 export default function RootLayout({
@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={geistSans.className}>
+    <html lang="en" className="scroll-smooth">
+      <body className={openSans.className}>
         {children}
         <ToastContainer />
       </body>

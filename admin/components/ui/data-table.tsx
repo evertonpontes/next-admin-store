@@ -1,21 +1,19 @@
 'use client';
 
-import * as React from 'react';
+import { useState } from 'react';
+
 import {
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
+  ColumnFiltersState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-
-import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
-import { DataTablePagination } from '@/components/ui/data-table-pagination';
 
 import {
   Table,
@@ -25,38 +23,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  placeholder?: string;
-  filterColumn?: string;
+  filter?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  placeholder,
-  filterColumn,
+  filter = 'name',
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -66,11 +60,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar
-        table={table}
-        placeholder={placeholder}
-        filterColumn={filterColumn}
-      />
+      <DataTableToolbar table={table} filter={filter} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

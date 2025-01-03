@@ -1,71 +1,54 @@
-import { prisma } from '@/prisma';
+import { StoreService } from '@/services/store';
 import { createClient } from '@/utils/supabase/server';
-import { NextResponse } from 'next/server';
-import z from 'zod';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
-export const storeBaseSchema = z.object({
-  name: z.string().min(3, 'Name must be at least 3 characters.'),
-  slug: z
-    .string()
-    .min(3, 'Slug must be at least 3 characters.')
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'must be a valid slug.'),
+export const storeBase = z.object({
+  name: z.string().min(3, { message: 'Name must be at least 3 characters.' }),
   description: z.string(),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const supabase = await createClient();
+  const store = new StoreService(supabase);
+
   try {
     const body = await req.json();
-    const { name, slug, description } = storeBaseSchema.parse(body);
-    const supabase = await createClient();
+    const { data: storeData, error: zodError } = storeBase.safeParse(body);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const store = await prisma.store.create({
-      data: {
-        name,
-        slug,
-        description,
-        ownerId: user.id,
-      },
-    });
+    if (zodError) {
+      return new NextResponse(zodError.message, { status: 400 });
+    }
 
-    return new NextResponse(JSON.stringify(store), { status: 201 });
+    const { data } = await store.create(storeData);
+
+    return new NextResponse(JSON.stringify(data), { status: 201 });
   } catch (error) {
-    console.log('Error_Store_POST: ', error);
+    console.error('CREATE_STORE ERROR: ', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
 
 export async function GET() {
+  const supabase = await createClient();
+  const store = new StoreService(supabase);
+
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const stores = await prisma.store.findMany({
-      where: {
-        ownerId: user.id,
-      },
-      include: {
-        _count: true,
-      },
-    });
+    const { data } = await store.getByUserId(user.user.id);
 
-    return new NextResponse(JSON.stringify(stores), { status: 200 });
+    return new NextResponse(JSON.stringify(data), { status: 200 });
   } catch (error) {
-    console.log('Error_Store_GET: ', error);
+    console.error('SELECT_STORE ERROR: ', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

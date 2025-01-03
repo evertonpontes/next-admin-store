@@ -1,8 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import { ChevronsUpDown, Plus, StoreIcon } from 'lucide-react';
-
+import { ChevronsUpDown, Plus, Store } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,34 +16,33 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Store } from '@prisma/client';
-import { useParams, useRouter } from 'next/navigation';
+import { StoreSchema } from '@/types/schema';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { useStoreModal } from '@/hooks/use-store-modal';
 
-export function StoreSwitcher({ stores }: { stores: Store[] }) {
+export const StoreSwitcher = ({ stores }: { stores: StoreSchema[] }) => {
   const params = useParams();
   const { isMobile } = useSidebar();
-  const [activeStore, setActiveStore] = React.useState(
-    stores.find((store) => store.id === params.storeId || '')
-  );
+  const [activeStore, setActiveStore] = useState<StoreSchema | null>(null);
+  const { isOpen, onOpen, onClose, onAction } = useStoreModal();
 
-  const { isOpen, onOpen, onClose, setCommand } = useStoreModal();
-  const route = useRouter();
-
-  const handleOpenChange = (open: boolean) => {
-    setCommand('create');
-
+  function handleOpenChange(open: boolean) {
     if (open) {
+      onAction('create');
       onOpen();
     } else {
       onClose();
     }
-  };
+  }
 
-  const handleSwitchStore = (store: Store) => {
-    setActiveStore(store);
-    route.push(`/home/${store.id}`);
-  };
+  useEffect(() => {
+    if (params.storeId) {
+      setActiveStore(
+        stores.find((store) => store.id === params.storeId) || null
+      );
+    }
+  }, [stores, params.storeId]);
 
   return (
     <SidebarMenu>
@@ -57,13 +54,12 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <StoreIcon className="size-4" />
+                <Store className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {activeStore?.name}
                 </span>
-                <span className="truncate text-xs">{activeStore?.slug}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -75,16 +71,16 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              stores
+              Stores
             </DropdownMenuLabel>
             {stores.map((store, index) => (
               <DropdownMenuItem
-                key={store.name}
-                onClick={() => handleSwitchStore(store)}
+                key={index}
+                onClick={() => setActiveStore(store)}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <StoreIcon className="size-4 shrink-0" />
+                  <Store className="size-4 shrink-0" />
                 </div>
                 {store.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
@@ -105,4 +101,4 @@ export function StoreSwitcher({ stores }: { stores: Store[] }) {
       </SidebarMenuItem>
     </SidebarMenu>
   );
-}
+};
